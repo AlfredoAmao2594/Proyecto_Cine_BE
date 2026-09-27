@@ -1,0 +1,42 @@
+server:
+  port: ${SERVER_PORT:8084}
+
+spring:
+  application:
+    name: complete-service
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/cine_db}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:postgres}
+    hikari:
+      maximum-pool-size: 5
+  jackson:
+    time-zone: America/Lima
+
+jwt:
+  secret: ${JWT_SECRET:U8eBYJbNrTv/G6bEsYTMTU3Qwz2/suBjMFK56ZuSz+8=}
+
+candystore:
+  url: ${CANDYSTORE_URL:http://localhost:8083}
+
+payu:
+  url: ${PAYU_URL:https://sandbox.api.payulatam.com/payments-api/4.0/service.cgi}
+  api-key: ${PAYU_API_KEY:4Vj8eK4rloUd272L48hsrarnUA}
+  api-login: ${PAYU_API_LOGIN:pRRXKOl8ikMmt9u}
+  account-id: ${PAYU_ACCOUNT_ID:512323}
+  merchant-id: ${PAYU_MERCHANT_ID:508029}
+  currency: PEN
+  country: PE
+  test: true
+  mock: ${PAYU_MOCK:false}
+  timeout-seconds: 30
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

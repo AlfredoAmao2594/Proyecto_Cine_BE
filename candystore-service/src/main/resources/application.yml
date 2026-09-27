@@ -1,0 +1,27 @@
+server:
+  port: ${SERVER_PORT:8083}
+
+spring:
+  application:
+    name: candystore-service
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/cine_db}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:postgres}
+    hikari:
+      maximum-pool-size: 5
+  jackson:
+    time-zone: America/Lima
+
+jwt:
+  secret: ${JWT_SECRET:U8eBYJbNrTv/G6bEsYTMTU3Qwz2/suBjMFK56ZuSz+8=}
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

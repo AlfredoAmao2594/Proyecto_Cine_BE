@@ -1,0 +1,15 @@
+# Etapa 1: compila con Maven y Java 11
+FROM maven:3.9-eclipse-temurin-11 AS build
+WORKDIR /app
+COPY pom.xml .
+RUN mvn -B -q dependency:go-offline
+COPY src ./src
+RUN mvn -B -q -DskipTests package
+
+# Etapa 2: solo el JRE y el jar
+FROM eclipse-temurin:11-jre
+WORKDIR /app
+ENV TZ=America/Lima
+COPY --from=build /app/target/*.jar app.jar
+EXPOSE 8083
+ENTRYPOINT ["java", "-jar", "app.jar"]
