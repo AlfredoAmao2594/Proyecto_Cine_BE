@@ -1,11 +1,3 @@
--- =============================================================================
--- 03_procedimientos.sql  (PostgreSQL 14 o superior)
---   * LECTURAS   = FUNCTION ... RETURNS TABLE  -> SELECT * FROM fn_...()
---   * ESCRITURAS = PROCEDURE con parámetros OUT -> CALL sp_...(...)
--- No se usa DELIMITER: el cuerpo va entre $$ ... $$.
--- =============================================================================
-
--- Estrenos activos, más recientes primero.
 CREATE OR REPLACE FUNCTION premieres.fn_listar_estrenos()
 RETURNS TABLE (
     id             UUID,
@@ -23,7 +15,7 @@ AS $$
      ORDER BY e.fecha_estreno DESC NULLS LAST, e.titulo;
 $$;
 
--- Productos activos, ordenados por categoría y nombre.
+
 CREATE OR REPLACE FUNCTION candystore.fn_listar_productos()
 RETURNS TABLE (
     id           UUID,
@@ -43,7 +35,6 @@ AS $$
               p.nombre;
 $$;
 
--- Precios vigentes de los productos pedidos (para recalcular el total).
 CREATE OR REPLACE FUNCTION candystore.fn_obtener_productos_por_ids(p_ids UUID[])
 RETURNS TABLE (
     id      UUID,
@@ -59,8 +50,6 @@ AS $$
        AND p.id = ANY (p_ids);
 $$;
 
--- Registra la cabecera de la compra.
---   p_codigo = '0' registrada | '1' transacción ya registrada | '2' datos inválidos
 CREATE OR REPLACE PROCEDURE complete.sp_registrar_compra(
     IN  p_correo            VARCHAR,
     IN  p_nombre_completo   VARCHAR,
@@ -87,7 +76,6 @@ BEGIN
         RETURN;
     END IF;
 
-    -- Idempotencia: si complete se reintenta con el mismo pago, no se duplica.
     SELECT c.id INTO p_id_compra
       FROM complete.compra c
      WHERE c.id_transaccion = p_id_transaccion;
@@ -113,7 +101,7 @@ BEGIN
     p_mensaje := 'Compra registrada';
 
 EXCEPTION
-    WHEN unique_violation THEN          -- dos peticiones simultáneas con el mismo pago
+    WHEN unique_violation THEN
         SELECT c.id INTO p_id_compra
           FROM complete.compra c
          WHERE c.id_transaccion = p_id_transaccion;
@@ -126,7 +114,6 @@ EXCEPTION
 END;
 $$;
 
--- Inserta una línea del detalle (el subtotal lo calcula la BD).
 CREATE OR REPLACE PROCEDURE complete.sp_registrar_compra_detalle(
     IN p_id_compra        UUID,
     IN p_id_producto      UUID,
@@ -145,7 +132,6 @@ BEGIN
 END;
 $$;
 
--- Auditoría de cada respuesta de PayU (aprobada o no).
 CREATE OR REPLACE PROCEDURE complete.sp_registrar_log_pago(
     IN p_codigo_referencia  VARCHAR,
     IN p_estado             VARCHAR,
@@ -164,8 +150,6 @@ BEGIN
 END;
 $$;
 
--- Último resultado de PayU para una transacción. complete-service lo usa para
--- comprobar que el pago existe, que fue APPROVED y cuál fue el monto cobrado.
 CREATE OR REPLACE FUNCTION complete.fn_buscar_pago(p_id_transaccion VARCHAR)
 RETURNS TABLE (
     codigo_referencia  VARCHAR,
@@ -185,7 +169,6 @@ AS $$
      LIMIT 1;
 $$;
 
--- Inserta o actualiza el usuario de Google (opcional).
 CREATE OR REPLACE PROCEDURE auth.sp_registrar_usuario(
     IN  p_correo      VARCHAR,
     IN  p_nombre      VARCHAR,

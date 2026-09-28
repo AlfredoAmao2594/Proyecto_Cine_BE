@@ -1,13 +1,7 @@
--- =============================================================================
--- 01_esquemas.sql
--- Un esquema por microservicio dentro de la base cine_db.
--- Ningún servicio lee el esquema de otro.
--- =============================================================================
-
-CREATE SCHEMA IF NOT EXISTS premieres;       -- premieres-service
-CREATE SCHEMA IF NOT EXISTS candystore;       -- candystore-service
-CREATE SCHEMA IF NOT EXISTS complete;        -- complete-service
-CREATE SCHEMA IF NOT EXISTS auth;  -- auth-service (opcional)
+CREATE SCHEMA IF NOT EXISTS premieres; 
+CREATE SCHEMA IF NOT EXISTS candystore;
+CREATE SCHEMA IF NOT EXISTS complete;  
+CREATE SCHEMA IF NOT EXISTS auth;
 
 COMMENT ON SCHEMA premieres      IS 'Estrenos que muestra la pantalla Home (premieres-service)';
 COMMENT ON SCHEMA candystore      IS 'Productos de dulcería (candystore-service)';

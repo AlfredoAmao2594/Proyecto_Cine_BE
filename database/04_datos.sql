@@ -1,10 +1,3 @@
--- =============================================================================
--- 04_datos.sql
--- Datos semilla con UUID fijos para poder probar en Postman y DBeaver
--- siempre con los mismos ids. Estrenos: a1...  Productos: b2...
--- Las imágenes se sirven desde frontend/public/img.
--- =============================================================================
-
 INSERT INTO premieres.estreno (id, titulo, descripcion, url_imagen, fecha_estreno) VALUES
 ('a1000000-0000-4000-8000-000000000001', 'Dune: Parte Dos',
  'Paul Atreides se une a Chani y a los Fremen en una guerra de venganza contra quienes destruyeron a su familia, mientras intenta evitar un futuro terrible que solo él puede prever.',

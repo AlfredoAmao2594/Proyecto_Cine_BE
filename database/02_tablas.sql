@@ -1,13 +1,3 @@
--- =============================================================================
--- 02_tablas.sql
--- Todas las llaves primarias son UUID generados por PostgreSQL con
--- gen_random_uuid() (incluido desde PostgreSQL 13, no requiere extensiones).
--- Nunca se guarda número de tarjeta ni CVV.
--- =============================================================================
-
--- -----------------------------------------------------------------------------
--- premieres.estreno
--- -----------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS premieres.estreno (
     id              UUID          PRIMARY KEY DEFAULT gen_random_uuid(),
     titulo          VARCHAR(150)  NOT NULL,
@@ -21,9 +11,6 @@ CREATE TABLE IF NOT EXISTS premieres.estreno (
 CREATE INDEX IF NOT EXISTS ix_estreno_activo_fecha
     ON premieres.estreno (activo, fecha_estreno DESC);
 
--- -----------------------------------------------------------------------------
--- candystore.producto
--- -----------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS candystore.producto (
     id           UUID           PRIMARY KEY DEFAULT gen_random_uuid(),
     nombre       VARCHAR(100)   NOT NULL,
@@ -36,9 +23,6 @@ CREATE TABLE IF NOT EXISTS candystore.producto (
     CONSTRAINT ck_producto_categoria CHECK (categoria IN ('COMBO', 'BEBIDA', 'SNACK'))
 );
 
--- -----------------------------------------------------------------------------
--- complete.compra
--- -----------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS complete.compra (
     id                UUID           PRIMARY KEY DEFAULT gen_random_uuid(),
     correo            VARCHAR(150)   NOT NULL,
@@ -58,14 +42,11 @@ CREATE TABLE IF NOT EXISTS complete.compra (
 
 CREATE INDEX IF NOT EXISTS ix_compra_correo ON complete.compra (correo);
 
--- -----------------------------------------------------------------------------
--- complete.compra_detalle
--- -----------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS complete.compra_detalle (
     id               UUID           PRIMARY KEY DEFAULT gen_random_uuid(),
     id_compra        UUID           NOT NULL,
-    id_producto      UUID           NOT NULL,   -- sin FK: el producto vive en otro esquema
-    nombre_producto  VARCHAR(100)   NOT NULL,   -- copia del nombre al momento de la compra
+    id_producto      UUID           NOT NULL,
+    nombre_producto  VARCHAR(100)   NOT NULL,
     cantidad         INTEGER        NOT NULL,
     precio_unitario  NUMERIC(10,2)  NOT NULL,
     subtotal         NUMERIC(10,2)  GENERATED ALWAYS AS (cantidad * precio_unitario) STORED,
@@ -77,9 +58,6 @@ CREATE TABLE IF NOT EXISTS complete.compra_detalle (
 
 CREATE INDEX IF NOT EXISTS ix_detalle_id_compra ON complete.compra_detalle (id_compra);
 
--- -----------------------------------------------------------------------------
--- complete.log_pago
--- -----------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS complete.log_pago (
     id                 UUID          PRIMARY KEY DEFAULT gen_random_uuid(),
     codigo_referencia  VARCHAR(100)  NOT NULL,
@@ -93,9 +71,6 @@ CREATE TABLE IF NOT EXISTS complete.log_pago (
 
 CREATE INDEX IF NOT EXISTS ix_log_pago_referencia ON complete.log_pago (codigo_referencia);
 
--- -----------------------------------------------------------------------------
--- auth.usuario (opcional)
--- -----------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS auth.usuario (
     id              UUID          PRIMARY KEY DEFAULT gen_random_uuid(),
     correo          VARCHAR(150)  NOT NULL,
