@@ -34,7 +34,7 @@ public class TraceIdFilter extends OncePerRequestFilter {
         try {
             chain.doFilter(request, response);
         } finally {
-            MDC.remove(MDC_KEY);   // el hilo se reutiliza: hay que limpiarlo
+            MDC.remove(MDC_KEY);
         }
     }
 }

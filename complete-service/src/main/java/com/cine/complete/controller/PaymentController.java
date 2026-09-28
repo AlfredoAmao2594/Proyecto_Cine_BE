@@ -5,7 +5,9 @@ import com.cine.complete.dto.ApiResponse;
 import com.cine.complete.dto.DatosDispositivo;
 import com.cine.complete.dto.PaymentRequest;
 import com.cine.complete.dto.PaymentResponse;
+import com.cine.complete.dto.TicketPriceResponse;
 import com.cine.complete.security.UsuarioAutenticado;
+import com.cine.complete.service.CalculadoraPedido;
 import com.cine.complete.service.PaymentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -17,6 +19,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.util.DigestUtils;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -35,6 +38,7 @@ import java.nio.charset.StandardCharsets;
 public class PaymentController {
 
     private final PaymentService paymentService;
+    private final CalculadoraPedido calculadoraPedido;
 
     @PostMapping
     @Operation(summary = "Cobra el carrito con PayU. El total lo calcula el backend.")
@@ -56,6 +60,12 @@ public class PaymentController {
 
         boolean aprobado = PayuResponse.STATE_APPROVED.equals(pago.getState());
         return ResponseEntity.ok(new ApiResponse<>(aprobado ? "0" : "1", pago.getMessage(), pago));
+    }
+
+    @GetMapping("/ticket-price")
+    @Operation(summary = "Precio de la entrada de cine (1 por compra). El front solo lo muestra; el cobro lo calcula el backend.")
+    public ResponseEntity<ApiResponse<TicketPriceResponse>> precioEntrada() {
+        return ResponseEntity.ok(ApiResponse.ok(new TicketPriceResponse(calculadoraPedido.getPrecioEntrada())));
     }
 
     /** PayU exige ip, userAgent, cookie y deviceSessionId (antifraude). */

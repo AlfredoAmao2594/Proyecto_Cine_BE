@@ -16,8 +16,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ProductoRepositoryImpl implements ProductoRepository {
 
-    private static final String SQL_LISTAR_ACTIVOS = "SELECT * FROM dulceria.fn_listar_productos()";
-    private static final String SQL_BUSCAR_POR_IDS = "SELECT * FROM dulceria.fn_obtener_productos_por_ids(?::uuid[])";
+    private static final String SQL_LISTAR_ACTIVOS = "SELECT * FROM candystore.fn_listar_productos()";
+    private static final String SQL_BUSCAR_POR_IDS = "SELECT * FROM candystore.fn_obtener_productos_por_ids(?::uuid[])";
 
     private static final RowMapper<Producto> PRODUCTO_ROW_MAPPER = (rs, numFila) -> Producto.builder()
             .id(rs.getObject("id", UUID.class))

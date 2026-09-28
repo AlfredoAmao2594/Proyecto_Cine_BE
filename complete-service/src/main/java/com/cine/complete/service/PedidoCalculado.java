@@ -10,7 +10,9 @@ import java.util.UUID;
 public class PedidoCalculado {
 
     List<Linea> lineas;
-    BigDecimal total;
+    BigDecimal subtotalProductos;
+    BigDecimal precioEntrada;
+    BigDecimal total;        
 
     @Value
     public static class Linea {

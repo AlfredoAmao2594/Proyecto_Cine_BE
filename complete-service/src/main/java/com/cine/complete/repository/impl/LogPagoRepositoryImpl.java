@@ -17,8 +17,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class LogPagoRepositoryImpl implements LogPagoRepository {
 
-    private static final String SQL_REGISTRAR = "CALL compras.sp_registrar_log_pago(?, ?, ?, ?, ?)";
-    private static final String SQL_BUSCAR = "SELECT * FROM compras.fn_buscar_pago(?)";
+    private static final String SQL_REGISTRAR = "CALL complete.sp_registrar_log_pago(?, ?, ?, ?, ?)";
+    private static final String SQL_BUSCAR = "SELECT * FROM complete.fn_buscar_pago(?)";
 
     private static final RowMapper<LogPago> LOG_PAGO_ROW_MAPPER = (rs, numFila) -> LogPago.builder()
             .codigoReferencia(rs.getString("codigo_referencia"))

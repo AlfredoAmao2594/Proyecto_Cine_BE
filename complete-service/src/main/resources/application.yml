@@ -31,6 +31,10 @@ payu:
   mock: ${PAYU_MOCK:false}
   timeout-seconds: 30
 
+cine:
+  # Precio de la entrada (1 por compra). El backend lo suma al total.
+  ticket-price: ${TICKET_PRICE:10.00}
+
 springdoc:
   swagger-ui:
     path: /swagger-ui.html

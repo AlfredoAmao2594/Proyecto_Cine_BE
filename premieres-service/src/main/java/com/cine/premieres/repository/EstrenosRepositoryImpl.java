@@ -17,9 +17,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class EstrenosRepositoryImpl implements EstrenosRepository {
 
-    private static final String SQL_LISTAR_ACTIVOS = "SELECT * FROM estrenos.fn_listar_estrenos()";
+    private static final String SQL_LISTAR_ACTIVOS = "SELECT * FROM premieres.fn_listar_estrenos()";
 
-    /** Convierte cada fila del resultado en un objeto Estrenos. */
     private static final RowMapper<Estrenos> ESTRENO_ROW_MAPPER = (rs, numFila) -> Estrenos.builder()
             .id(rs.getObject("id", UUID.class))
             .titulo(rs.getString("titulo"))

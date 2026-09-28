@@ -34,9 +34,7 @@ public class SecurityConfig {
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(authenticationEntryPoint))
                 .authorizeHttpRequests(auth -> auth
                         .antMatchers(RUTAS_PUBLICAS).permitAll()
-                        // El login de invitado es público: aquí es donde se CONSIGUE el token
                         .antMatchers(HttpMethod.POST, "/api/auth/guest").permitAll()
-                        // /api/auth/me y cualquier otra ruta exigen token
                         .anyRequest().authenticated())
                 .addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 

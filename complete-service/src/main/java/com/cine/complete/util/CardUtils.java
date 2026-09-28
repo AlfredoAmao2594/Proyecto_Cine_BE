@@ -11,10 +11,6 @@ public final class CardUtils {
     private CardUtils() {
     }
 
-    /**
-     * Algoritmo de Luhn: de derecha a izquierda, duplica uno sí y uno no;
-     * si el doble pasa de 9 réstale 9; la suma total debe ser múltiplo de 10.
-     */
     public static boolean esLuhnValido(String numero) {
         if (numero == null || !numero.matches("\\d{12,19}")) {
             return false;
@@ -35,7 +31,6 @@ public final class CardUtils {
         return suma % 10 == 0;
     }
 
-    /** Franquicia según el primer dígito (suficiente para el sandbox). */
     public static String franquicia(String numero) {
         switch (numero.charAt(0)) {
             case '4':
@@ -49,7 +44,6 @@ public final class CardUtils {
         }
     }
 
-    /** "4097440000000004" -> "************0004" */
     public static String enmascarar(String numero) {
         if (numero == null || numero.length() < 4) {
             return "****";
@@ -57,7 +51,6 @@ public final class CardUtils {
         return "*".repeat(numero.length() - 4) + numero.substring(numero.length() - 4);
     }
 
-    /** true si la fecha YYYY/MM ya pasó (una tarjeta vence al terminar su mes). */
     public static boolean estaVencida(String expiracion, YearMonth mesActual) {
         try {
             return YearMonth.parse(expiracion, FORMATO_EXPIRACION).isBefore(mesActual);

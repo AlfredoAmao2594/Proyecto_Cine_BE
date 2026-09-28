@@ -39,7 +39,6 @@ public class CompleteServiceImpl implements CompleteService {
     public ResultadoRegistroCompra registrarCompra(CompleteRequest request, String authorization) {
         log.info("Registrando compra de la transacción {}", request.getTransactionId());
 
-        // 1. Seguridad: solo se registran pagos que PayU realmente aprobó (quedaron en log_pago)
         LogPago pago = logPagoRepository.buscarPorTransaccion(request.getTransactionId())
                 .orElseThrow(() -> new BusinessException(HttpStatus.BAD_REQUEST, "La transacción no existe"));
         if (!APROBADO.equals(pago.getEstado())) {
@@ -61,7 +60,6 @@ public class CompleteServiceImpl implements CompleteService {
             }
         }
 
-        // 3. Cabecera: el SP devuelve el código "0" que pide el reto
         Compra compra = Compra.builder()
                 .correo(request.getEmail())
                 .nombreCompleto(request.getName())
@@ -70,7 +68,7 @@ public class CompleteServiceImpl implements CompleteService {
                 .idTransaccion(request.getTransactionId())
                 .idOrdenPayu(request.getOrderId())
                 .fechaOperacion(LocalDateTime.ofInstant(Instant.ofEpochMilli(request.getOperationDate()), ZONA_LIMA))
-                .montoTotal(pago.getMonto())   // el monto real cobrado, no uno enviado por el front
+                .montoTotal(pago.getMonto())
                 .build();
 
         ResultadoRegistroCompra resultado = compraRepository.registrarCompra(compra);

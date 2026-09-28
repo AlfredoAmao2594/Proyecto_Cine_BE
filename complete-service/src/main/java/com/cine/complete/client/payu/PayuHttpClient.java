@@ -29,7 +29,6 @@ public class PayuHttpClient implements PayuClient {
     public PayuResponse enviarPago(PayuRequest request) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        // Sin Accept: application/json, PayU responde en XML
         headers.setAccept(List.of(MediaType.APPLICATION_JSON));
 
         try {

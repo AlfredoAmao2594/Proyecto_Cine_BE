@@ -26,5 +26,5 @@ public class Compra {
     private BigDecimal montoTotal;
     private String estado;
     private LocalDateTime fechaCreacion;
-    private List<CompraDetalle> detalles;   // no es columna: las líneas de compra_detalle
+    private List<CompraDetalle> detalles;
 }

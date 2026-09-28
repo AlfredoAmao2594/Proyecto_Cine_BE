@@ -22,10 +22,10 @@ import java.util.UUID;
 public class CompraRepositoryImpl implements CompraRepository {
 
     private static final String SQL_REGISTRAR_COMPRA =
-            "CALL compras.sp_registrar_compra(?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL, NULL)";
+            "CALL complete.sp_registrar_compra(?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL, NULL)";
 
     private static final String SQL_REGISTRAR_DETALLE =
-            "CALL compras.sp_registrar_compra_detalle(?, ?, ?, ?, ?)";
+            "CALL complete.sp_registrar_compra_detalle(?, ?, ?, ?, ?)";
 
     private final JdbcTemplate jdbcTemplate;
 

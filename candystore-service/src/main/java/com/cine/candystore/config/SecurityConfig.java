@@ -16,7 +16,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    /** Rutas que NO piden token. */
     private static final String[] RUTAS_PUBLICAS = {
             "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**",
             "/actuator/health"
@@ -28,21 +27,15 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // API REST sin sesión ni formularios: CSRF no aplica
                 .csrf(csrf -> csrf.disable())
                 .httpBasic(basic -> basic.disable())
                 .formLogin(form -> form.disable())
-                // Cada request trae su token; el servidor no guarda sesión
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                // 401 en JSON cuando falta el token o es inválido
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(authenticationEntryPoint))
                 .authorizeHttpRequests(auth -> auth
                         .antMatchers(RUTAS_PUBLICAS).permitAll()
-                        // premieres es público: Home carga sin login
                         .antMatchers(HttpMethod.GET, "/api/premieres/**").permitAll()
-                        // cualquier otra ruta exige token
                         .anyRequest().authenticated())
-                // Nuestro filtro se ejecuta antes del filtro de login de Spring
                 .addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

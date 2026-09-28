@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/** Datos de la sesión actual (GET /api/auth/me). */
 @Data
 @Builder
 @NoArgsConstructor

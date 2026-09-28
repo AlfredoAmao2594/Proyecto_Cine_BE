@@ -39,7 +39,6 @@ public class PaymentServiceImpl implements PaymentService {
     private static final Set<String> ESTADOS_VALIDOS = Set.of("APPROVED", "DECLINED", "PENDING", "ERROR");
     private static final String ESTADO_ERROR = "ERROR";
 
-    /** El formulario del reto no pide teléfono ni dirección, pero PayU los exige. */
     private static final String TELEFONO_POR_DEFECTO = "999999999";
     private static final PayuRequest.Direccion DIRECCION_POR_DEFECTO = PayuRequest.Direccion.builder()
             .street1("Av. Principal 123").city("Lima").state("Lima")
@@ -55,16 +54,14 @@ public class PaymentServiceImpl implements PaymentService {
     public PaymentResponse procesarPago(PaymentRequest request, DatosDispositivo dispositivo, String authorization) {
         validarDatos(request);
 
-        // 1. El total SIEMPRE se calcula con los precios de candystore
         PedidoCalculado pedido = calculadoraPedido.calcular(request.getItems(), authorization);
         BigDecimal total = pedido.getTotal();
 
-        // 2. Referencia única de nuestra orden
         String referencia = "CINE-" + UUID.randomUUID();
-        log.info("Procesando pago {} | tarjeta {} | total S/ {}",
-                referencia, CardUtils.enmascarar(request.getCardNumber()), total);
+        log.info("Procesando pago {} | tarjeta {} | total S/ {} (dulcería S/ {} + entrada S/ {})",
+                referencia, CardUtils.enmascarar(request.getCardNumber()), total,
+                pedido.getSubtotalProductos(), pedido.getPrecioEntrada());
 
-        // 3. Armar y enviar la petición a PayU
         PayuRequest payuRequest = construirPeticion(request, dispositivo, total, referencia);
         PayuResponse payuResponse;
         try {
@@ -73,8 +70,6 @@ public class PaymentServiceImpl implements PaymentService {
             registrarLog(referencia, ESTADO_ERROR, "SIN_RESPUESTA", null, total);
             throw e;
         }
-
-        // 4. Interpretar la respuesta y dejar auditoría (aprobada o no)
         PaymentResponse respuesta = interpretar(payuResponse, referencia, total);
         String codigoRespuesta = payuResponse != null && payuResponse.getTransactionResponse() != null
                 ? payuResponse.getTransactionResponse().getResponseCode() : ESTADO_ERROR;
@@ -88,7 +83,6 @@ public class PaymentServiceImpl implements PaymentService {
         return respuesta;
     }
 
-    /** Reglas que @Valid no puede expresar con anotaciones simples. */
     private void validarDatos(PaymentRequest request) {
         if (!CardUtils.esLuhnValido(request.getCardNumber())) {
             throw new BusinessException(HttpStatus.BAD_REQUEST, "El número de tarjeta no es válido");
@@ -102,7 +96,6 @@ public class PaymentServiceImpl implements PaymentService {
         }
     }
 
-    /** MD5 de "apiKey~merchantId~referenceCode~valor~moneda", como indica PayU. */
     String calcularFirma(String referencia, BigDecimal total) {
         String texto = String.join("~",
                 payuProperties.getApiKey(),
@@ -170,7 +163,6 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     private PaymentResponse interpretar(PayuResponse payuResponse, String referencia, BigDecimal total) {
-        // code != SUCCESS: PayU ni siquiera procesó la transacción (firma mala, datos faltantes...)
         if (payuResponse == null || !PayuResponse.CODE_SUCCESS.equals(payuResponse.getCode())
                 || payuResponse.getTransactionResponse() == null) {
             String error = payuResponse != null && payuResponse.getError() != null
@@ -207,7 +199,6 @@ public class PaymentServiceImpl implements PaymentService {
                     .monto(monto)
                     .build());
         } catch (DataAccessException e) {
-            // El cobro ya ocurrió: no se debe responder error al usuario por un fallo de auditoría
             log.error("No se pudo guardar log_pago de {}: {}", referencia, e.getMessage());
         }
     }

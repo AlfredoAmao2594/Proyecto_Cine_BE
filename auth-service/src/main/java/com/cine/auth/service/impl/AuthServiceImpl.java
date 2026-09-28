@@ -21,7 +21,6 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthResponse loginInvitado() {
-        // Cada invitado recibe un identificador único, aunque no se guarde en BD
         String sub = "guest-" + UUID.randomUUID();
         log.info("Login de invitado: {}", sub);
 

@@ -23,11 +23,6 @@ public class JwtUtil {
         this.expiracionMinutos = expiracionMinutos;
     }
 
-    /**
-     * @param sub    correo del usuario, o "guest-<uuid>" para invitados
-     * @param nombre claim "name"
-     * @param rol    claim "role": USER | GUEST
-     */
     public String generarToken(String sub, String nombre, String rol) {
         long ahora = System.currentTimeMillis();
         return Jwts.builder()
